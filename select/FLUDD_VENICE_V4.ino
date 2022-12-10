@@ -67,7 +67,14 @@ bool presenza = false;
 int bottoneCounter = 0;
 int presenzaCounter = 0;
 
+unsigned long tBlendOn = 0;
+unsigned long tBlendOff = 0;
+bool firstBlend = true;
+bool sBlending = false;
+
 void loop() {
+
+  checkBlending();
 
   if (digitalRead(btnDisp)) {
     digitalWrite(ledBtn, HIGH);
@@ -98,15 +105,13 @@ void loop() {
     spegni();
     //accendi macerazione
     digitalWrite(ventoRX_02, HIGH);
-    //accendi blending
-    digitalWrite(blendSignal, HIGH);
 
-    delay(2000);
     dPlay = millis();
     sPlay = 0;
     while (sPlay < 5) {
       ledBtnBlink();
       evoluzione();
+      checkBlending();
     }
 
   }
@@ -122,11 +127,34 @@ void loop() {
     else {  //se non c'è nessuno
 
       spegni();
+      firstBlend = true;
 
     }
 
   }
 
+}
+
+void checkBlending() {
+	if (sBlending) {
+		if (firstBlend) {
+			tBlendOn = millis();
+			digitalWrite(blendSignal, HIGH);
+			sBlending = false;
+			firstBlend = false;
+		}
+		if ((millis() - tBlendOff) > 5000) {
+			tBlendOn = millis();
+			digitalWrite(blendSignal, HIGH);
+			sBlending = false;
+		}
+	}
+	else {
+		if ((millis() - tBlendOn) > 21000) {
+			tBlendOff = millis();
+			digitalWrite(blendSignal, LOW);
+		}
+	}
 }
 
 void spegni() {
@@ -153,7 +181,7 @@ void spegni() {
   
   digitalWrite(airPump_05, LOW);
   digitalWrite(ledBtn, LOW);
-  digitalWrite(blendSignal, LOW);
+
 }
 
 unsigned long tMacerazione = 0, tPulse = 0, tVulcano = 0, tFilter = 0;
@@ -192,7 +220,7 @@ void evoluzione() {
     digitalWrite(airPump_01, HIGH);
 
     //accendi blending
-    digitalWrite(blendSignal, HIGH);
+    sBlending = true;
 
     if ((millis() - dPlay) > 1000) {
       sPlay = 1;
@@ -260,7 +288,8 @@ void movimento() {
   //sempre accese / spente
   digitalWrite(airPump_01, HIGH);
   digitalWrite(sideLED, HIGH);
-  digitalWrite(blendSignal, HIGH);
+
+  sBlending = true;
 
   //macerazione a scatti
   digitalWrite(ventoRX_02, HIGH);
