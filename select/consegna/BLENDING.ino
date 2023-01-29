@@ -20,7 +20,7 @@ void loop()
 {
     // If at the end of travel go to the other end
     if (stepper.distanceToGo() == 0) {
-      if (C < 2) {
+      if (C < 6) {
       stepper.moveTo(-stepper.currentPosition());
       delay(100);
       C++;
