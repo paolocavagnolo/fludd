@@ -134,6 +134,9 @@ void loop() {
 
     else {  //se non c'è nessuno
 
+      ledBtnPulse();
+      movimento();
+      
       if ((millis() - presenzaTimer) > 10000) {
         spegni();
         sBlending = false;
@@ -159,7 +162,7 @@ void checkBlending() {
   }
   else {
     if (fBlendOff) {
-      if ((millis() - tBlendOff) > 21000) {
+      if ((millis() - tBlendOff) > 35000) {
         digitalWrite(blending_04, LOW);
         tBlendOn = millis();
         fBlendOff = false;
