@@ -11,7 +11,7 @@ void setup()
   // Change these to suit your stepper if you want
   stepper.setMaxSpeed(4000);
   stepper.setAcceleration(5500);
-  stepper.moveTo(5000);
+  stepper.moveTo(5500);
 }
 
 uint8_t C = 0;
@@ -36,7 +36,5 @@ void loop()
     }
 
     stepper.run();
-    
-    
-    
+ 
 }
