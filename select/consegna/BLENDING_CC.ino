@@ -1,15 +1,16 @@
 // Arduino UNO
 // coded 7/5/2024 by Paolo C.
+// mod 21/5/25
 
 #define goPin 9
 #define rel_1 10 //+12 V
 #define rel_2 11 // switch cable A
 #define rel_3 12 // switch cable B
 
-#define TRAVEL_LEFT 3500
-#define PAUSE_LEFT 1500
-#define TRAVEL_RIGHT 3500
-#define PAUSE_RIGHT 1500
+#define TRAVEL_LEFT 1500
+#define PAUSE_LEFT 1000
+#define TRAVEL_RIGHT 1500
+#define PAUSE_RIGHT 1000
 
 void setup() {
 
@@ -61,7 +62,7 @@ void loop() {
     goLeft(TRAVEL_LEFT / 2);
     stop(PAUSE_LEFT);
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 2; i++) {
       goRight(TRAVEL_RIGHT);
       stop(PAUSE_RIGHT);
       goLeft(TRAVEL_LEFT);
@@ -69,6 +70,7 @@ void loop() {
     }
 
     goRight(TRAVEL_RIGHT / 2);
+
   } else {
     idle();
   }
@@ -101,4 +103,3 @@ void goRight(float tt) {
   digitalWrite(rel_1, LOW);
   delay(tt-100);
 }
-
