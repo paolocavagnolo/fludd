@@ -1,6 +1,6 @@
 // Arduino UNO
 // coded 7/5/2024 by Paolo C.
-// mod 21/5/25
+// mod 04/06/2025
 
 #define goPin 9
 #define rel_1 10 //+12 V
