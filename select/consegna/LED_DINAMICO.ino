@@ -39,41 +39,68 @@ bool beam = false;
 unsigned long startT = 0;
 unsigned long fadeT = 0;
 
-bool sali = true;
+bool sali = true, fadeOut = false;
+unsigned long tShow = 0;
+int idxBeam = 0;
+unsigned long tBeam = 0, attesa = 25;
+
+long counterBtnIn = 0;
 
 void loop() {
 
-  Serial.println(digitalRead(BTN_IN));
+  if (!beam) {
+    if (!digitalRead(BTN_IN)) {
+      counterBtnIn++;
+    } else {
+      counterBtnIn = 0;
+    }
 
-  if (!digitalRead(BTN_IN)) {
-    beam = true;
-    startT = millis();
-  }
-
-  if (beam) {
-    if ((millis() - startT) > 3) {
-      for (i = 0; i < NUM_LEDS; i++) {
-        leds[i] = CHSV(map(i, 0, NUM_LEDS, 5, -6), 255, 255);
-        delay(25);
-        FastLED.show();
-      }
-      delay(2500);
-      for (int jj = 255; jj >= 0; jj--) {
-        for (i = 0; i < NUM_LEDS; i++) {
-          leds[i] = CHSV(map(i, 0, NUM_LEDS, 5, -6), 255, jj);
-        }
-        FastLED.show();
-      }
-      beam = false;
+    if (counterBtnIn > 10000) {
+      beam = true;
+      fadeOut = false;
+      attesa = 25;
+      startT = millis();
+      counterBtnIn = 0;
     }
   }
-  else {
+  
+  if (beam) {
 
-    fill_solid(leds, NUM_LEDS, CHSV(-6, 255, j));
-    FastLED.show();
+    if ((millis() - startT) > 3) {
+
+      if ((millis() - tBeam) > attesa) {
+        tBeam = millis();
+
+        if (!fadeOut) {
+          if (idxBeam < NUM_LEDS) {
+            leds[idxBeam] = CHSV(map(idxBeam, 0, NUM_LEDS, 5, -6), 255, 255);
+            idxBeam++;
+          } else {
+            attesa = 2500;
+            fadeOut = true;
+            idxBeam = 255;
+          }
+        } else {
+          attesa = 8;
+          for (i = 0; i < NUM_LEDS; i++) {
+            leds[i] = CHSV(map(i, 0, NUM_LEDS, 5, -6), 255, idxBeam);
+          }
+          if (idxBeam > 0) {
+            idxBeam--;
+          } else {
+            beam = false;
+          } 
+        }
+      }
+    }
+
+  }
+
+  else {
 
     if ((millis() - fadeT) > 10) {
       fadeT = millis();
+      fill_solid(leds, NUM_LEDS, CHSV(-6, 255, j));
       if (sali) {
         j++;
       }
@@ -84,5 +111,13 @@ void loop() {
         sali = !sali;
       }
     }
+
   }
+
+
+  if ((millis() - tShow) > (1000/25)) {
+    tShow = millis();
+    FastLED.show();
+  }
+
 }
